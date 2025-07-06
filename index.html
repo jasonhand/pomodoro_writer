@@ -41,22 +41,30 @@
             display: flex;
             flex-direction: column;
             transition: all 0.3s ease;
+            overflow: visible; /* Ensure body doesn't clip content */
         }
 
         .flash {
             animation: flash 0.5s ease-in-out 3;
+            overflow: hidden; /* Prevent scrollbars during flash */
         }
 
         @keyframes flash {
-            0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-            50% { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); }
+            0%, 100% { 
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                transform: scale(1);
+            }
+            50% { 
+                background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+                transform: scale(1);
+            }
         }
 
         .header {
             padding: 20px;
             text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: transparent; /* Completely transparent */
+            backdrop-filter: none; /* Remove backdrop filter */
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
@@ -83,55 +91,133 @@
         }
 
         .section-info {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 10px 0;
+            background: #fff9c4;
+            padding: 20px;
+            border-radius: 2px;
+            margin: 15px auto;
             color: #333;
             font-size: 1.1rem;
-            line-height: 1.4;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            line-height: 1.5;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            position: relative;
+            transform: rotate(-1deg);
+            box-shadow: 
+                0 4px 8px rgba(0, 0, 0, 0.15),
+                0 8px 16px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+            border: 1px solid #f0e68c;
+            width: 300px;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .section-info::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 8px solid #f0e68c;
+        }
+
+        .section-info::after {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-bottom: 7px solid #fff9c4;
         }
 
         .section-info h3 {
-            margin-bottom: 8px;
-            color: #764ba2;
+            margin-bottom: 12px;
+            color: #d4af37;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #f0e68c;
+            padding-bottom: 8px;
+            margin-top: 0;
         }
 
         .main-content {
             flex: 1;
-            padding: 20px;
+            padding: 0;
             display: flex;
             flex-direction: column;
+            position: relative;
+            height: 100vh;
+            box-sizing: border-box;
+            overflow: visible; /* Changed from hidden to visible to allow cats to show */
+        }
+
+        .writing-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            max-width: 900px;
+            margin: 40px auto 100px auto;
+            padding: 0 24px;
+            background: rgba(255,255,255,0.97);
+            border-radius: 22px;
+            box-shadow: 0 8px 32px rgba(80, 80, 120, 0.10), 0 1.5px 8px rgba(80, 80, 120, 0.08);
+            min-height: 350px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
         }
 
         .writing-area {
             flex: 1;
             width: 100%;
-            min-height: 400px;
-            padding: 25px;
-            font-size: 1.2rem;
+            min-height: 300px;
+            max-height: calc(100vh - 200px); /* Account for header and controls */
+            padding: 32px 24px;
+            font-size: 4.4rem;
             line-height: 1.6;
             border: none;
-            border-radius: 15px;
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-radius: 18px;
+            background: transparent;
+            box-shadow: none;
             resize: none;
             outline: none;
             font-family: 'Georgia', serif;
             color: #333;
+            overflow-y: auto; /* Enable vertical scrolling */
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
 
         .writing-area:disabled {
-            background: rgba(200, 200, 200, 0.5);
+            background: rgba(200, 200, 200, 0.25);
             cursor: not-allowed;
         }
 
         .controls {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100vw;
             display: flex;
             gap: 15px;
-            margin-top: 20px;
             justify-content: center;
+            align-items: center;
+            padding: 18px 10px 18px 10px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(200, 200, 200, 0.2);
+            z-index: 200;
+            box-sizing: border-box;
         }
 
         .btn {
@@ -187,6 +273,19 @@
             z-index: 1000;
         }
 
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
         .modal-content {
             background: white;
             padding: 30px;
@@ -218,6 +317,20 @@
             border-color: #764ba2;
         }
 
+        .timer-option {
+            transition: all 0.3s ease;
+        }
+
+        .timer-option:hover {
+            transform: translateY(-2px);
+        }
+
+        input[type="radio"]:checked + span {
+            background: linear-gradient(45deg, #667eea, #764ba2) !important;
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
         .status {
             text-align: center;
             margin-top: 15px;
@@ -227,25 +340,300 @@
         }
 
         .word-count {
-            text-align: right;
-            margin-top: 10px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
+            margin-right: auto;
+            font-size: 1.1rem;
+            color: #666;
+            padding-left: 10px;
         }
 
-        @media (max-width: 768px) {
-            .timer {
-                font-size: 2rem;
+        .cat-clock {
+            position: absolute;
+            top: -100px;
+            right: 20px;
+            width: 240px;
+            height: 240px;
+            z-index: 300;
+        }
+
+        .cat-clock.left {
+            right: auto;
+            left: 20px;
+        }
+
+        .cat-clock.left .cat {
+            transform: scaleX(-1);
+        }
+
+        .cat-clock .main {
+            height: 240px;
+            width: 240px;
+            position: relative;
+        }
+
+        .cat-clock .cat {
+            width: 88px;
+            height: 40px;
+            position: absolute;
+            top: calc(50% - 40px);
+            right: 104px;
+            border-top-left-radius: 80px;
+            border-top-right-radius: 80px;
+        }
+
+        .cat-clock .cat .body {
+            width: 88px;
+            height: 40px;
+            background-color: #333333;
+            position: absolute;
+            border-top-left-radius: 80px;
+            border-top-right-radius: 80px;
+            animation: body 12s none infinite;
+        }
+
+        .cat-clock .cat .head {
+            content: "";
+            width: 56px;
+            height: 28px;
+            background-color: #333333;
+            position: absolute;
+            top: calc(50% - 8px);
+            left: -32px;
+            border-top-left-radius: 64px;
+            border-top-right-radius: 64px;
+        }
+
+        .cat-clock .cat.tabby .body {
+            background: radial-gradient(circle at 25% 25%, #808080 2px, transparent 2px),
+                        radial-gradient(circle at 75% 75%, #808080 3px, transparent 3px),
+                        radial-gradient(circle at 50% 50%, #333333 4px, transparent 4px),
+                        radial-gradient(circle at 10% 80%, #808080 2px, transparent 2px),
+                        radial-gradient(circle at 90% 20%, #333333 3px, transparent 3px),
+                        radial-gradient(ellipse 8px 3px at 40% 40%, #555555 0%, #555555 50%, transparent 50%),
+                        radial-gradient(ellipse 6px 2px at 60% 60%, #555555 0%, #555555 50%, transparent 50%),
+                        radial-gradient(ellipse 10px 4px at 30% 70%, #555555 0%, #555555 50%, transparent 50%),
+                        radial-gradient(ellipse 7px 3px at 70% 30%, #555555 0%, #555555 50%, transparent 50%),
+                        #808080;
+            background-size: 30px 30px, 25px 25px, 35px 35px, 20px 20px, 28px 28px, 25px 25px, 20px 20px, 30px 30px, 22px 22px, 100% 100%;
+        }
+
+        .cat-clock .cat.tabby .head {
+            background: radial-gradient(circle at 30% 30%, #808080 2px, transparent 2px),
+                        radial-gradient(circle at 70% 70%, #333333 3px, transparent 3px),
+                        radial-gradient(circle at 60% 40%, #808080 2px, transparent 2px),
+                        radial-gradient(ellipse 6px 2px at 50% 50%, #555555 0%, #555555 50%, transparent 50%),
+                        #808080;
+            background-size: 20px 20px, 18px 18px, 15px 15px, 18px 18px, 100% 100%;
+        }
+
+        .cat-clock .tail-container {
+            position: absolute;
+            right: 0;
+            bottom: -10px;
+            z-index: 3;
+        }
+
+        .cat-clock .tail {
+            position: absolute;
+            height: 24px;
+            width: 12px;
+            bottom: -8px;
+            right: 0;
+            border-bottom-right-radius: 4px;
+            background: #333333;
+            z-index: 0;
+        }
+
+        .cat-clock .cat.tabby .tail {
+            background: radial-gradient(circle at 30% 30%, #808080 2px, transparent 2px),
+                        radial-gradient(circle at 70% 70%, #333333 2px, transparent 2px),
+                        radial-gradient(ellipse 5px 2px at 40% 40%, #555555 0%, #555555 50%, transparent 50%),
+                        #808080;
+            background-size: 15px 15px, 12px 12px, 15px 15px, 100% 100%;
+        }
+
+        .cat-clock .tail > .tail {
+            animation: tail 12s none infinite;
+            height: 100%;
+            width: 12px;
+            transform-origin: left;
+            border-bottom-left-radius: 16px 16px;
+            border-bottom-right-radius: 16px 16px;
+            border-top-right-radius: 32px;
+        }
+
+        .cat-clock.left .tail > .tail {
+            animation-delay: -6s;
+        }
+
+        .cat-clock .ear {
+            position: absolute;
+            left: 4px;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 16px solid #333333;
+            transform: rotate(-30deg);
+            animation: left-ear 12s both infinite;
+        }
+
+        .cat-clock .ear + .ear {
+            animation: right-ear 12s both infinite;
+            top: -10px;
+            left: 24px;
+        }
+
+        .cat-clock .cat.tabby .ear {
+            border-bottom-color: #808080;
+        }
+
+        .cat-clock .cat.tabby .ear + .ear {
+            border-bottom-color: #808080;
+        }
+
+        .cat-clock .nose {
+            position: absolute;
+            bottom: 8px;
+            left: -8px;
+            background-color: #fd6e72;
+            height: 4px;
+            width: 4px;
+            border-radius: 50%;
+        }
+
+        .cat-clock .whisker-container {
+            position: absolute;
+            bottom: 4px;
+            left: -28px;
+            width: 16px;
+            height: 8px;
+            transform-origin: right;
+            animation: left-whisker 12s both infinite;
+        }
+
+        .cat-clock .whisker-container:nth-child(2) {
+            left: -16px;
+            bottom: 10px;
+            transform-origin: right;
+            transform: rotate(180deg);
+            animation: right-whisker 12s both infinite;
+        }
+
+        .cat-clock .whisker {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            border: 1px solid #fdf9de;
+            transform-origin: 100% 0;
+            transform: rotate(10deg);
+        }
+
+        .cat-clock .whisker:last-child {
+            top: 0;
+            transform: rotate(-20deg);
+        }
+
+        @keyframes tail {
+            6.6666666667% { transform: rotate(0); }
+            10% { transform: rotate(10deg); }
+            16.6666666667% { transform: rotate(-5deg); }
+            20% { transform: rotate(30deg); }
+            26.6666666667% { transform: rotate(-2deg); }
+            46.6666666667% { transform: rotate(10deg); }
+            53.3333333333% { transform: rotate(-5deg); }
+            56.6666666667% { transform: rotate(10deg); }
+        }
+
+        @keyframes body {
+            6.6666666667% { transform: scaleY(1); }
+            10% { transform: scaleY(1.15); }
+            16.6666666667% { transform: scaleY(1); }
+            20% { transform: scaleY(1.25); }
+            26.6666666667% { transform: scaleY(1); }
+            46.6666666667% { transform: scaleY(1.15); }
+            53.3333333333% { transform: scaleY(1); }
+            56.6666666667% { transform: scaleY(1.15); }
+        }
+
+        @keyframes left-whisker {
+            6.6666666667% { transform: rotate(0); }
+            10% { transform: rotate(0deg); }
+            16.6666666667% { transform: rotate(-5deg); }
+            20% { transform: rotate(0deg); }
+            26.6666666667% { transform: rotate(0deg); }
+            46.6666666667% { transform: rotate(10deg); }
+            53.3333333333% { transform: rotate(-5deg); }
+            56.6666666667% { transform: rotate(10deg); }
+        }
+
+        @keyframes right-whisker {
+            6.6666666667% { transform: rotate(180deg); }
+            10% { transform: rotate(190deg); }
+            16.6666666667% { transform: rotate(180deg); }
+            20% { transform: rotate(175deg); }
+            26.6666666667% { transform: rotate(190deg); }
+            46.6666666667% { transform: rotate(180deg); }
+            53.3333333333% { transform: rotate(185deg); }
+            56.6666666667% { transform: rotate(175deg); }
+        }
+
+        @keyframes left-ear {
+            0% { transform: rotate(-20deg); }
+            6.6666666667% { transform: rotate(-6deg); }
+            13.3333333333% { transform: rotate(-15deg); }
+            26.6666666667% { transform: rotate(-15deg); }
+            33.3333333333% { transform: rotate(-30deg); }
+            40% { transform: rotate(-30deg); }
+            46.6666666667% { transform: rotate(0deg); }
+            53.3333333333% { transform: rotate(0deg); }
+            60% { transform: rotate(-15deg); }
+            80% { transform: rotate(-15deg); }
+            93.3333333333% { transform: rotate(-6deg); }
+            100% { transform: rotateZ(-6deg); }
+        }
+
+        @keyframes right-ear {
+            0% { transform: rotateZ(-16deg); }
+            6.6666666667% { transform: rotateZ(-16deg); }
+            13.3333333333% { transform: rotateZ(-19deg); }
+            26.6666666667% { transform: rotateZ(-19deg); }
+            33.3333333333% { transform: rotateZ(-30deg); }
+            36.6666666667% { transform: rotateZ(-19deg); }
+            37.3333333333% { transform: rotateZ(-30deg); }
+            38% { transform: rotateZ(-19deg); }
+            40% { transform: rotateZ(-19deg); }
+            40.6666666667% { transform: rotateZ(-30deg); }
+            41.3333333333% { transform: rotateZ(-19deg); }
+            46.6666666667% { transform: rotateZ(-9deg); }
+            53.3333333333% { transform: rotateZ(-9deg); }
+            60% { transform: rotateZ(-19deg); }
+            60.6666666667% { transform: rotateZ(-30deg); }
+            61.3333333333% { transform: rotateZ(-19deg); }
+            62.6666666667% { transform: rotateZ(-19deg); }
+            63.3333333333% { transform: rotateZ(-30deg); }
+            64% { transform: rotateZ(-19deg); }
+            80% { transform: rotateZ(-19deg); }
+            93.3333333333% { transform: rotateZ(-16deg); }
+            100% { transform: rotateZ(-16deg); }
+        }
+
+        .cat-clock.hidden {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            .writing-container {
+                max-width: 98vw;
+                margin: 24px 1vw 100px 1vw; /* Increased bottom margin for controls */
+                padding: 0 4vw;
             }
-            
             .writing-area {
-                font-size: 1.1rem;
-                padding: 20px;
-            }
-            
-            .controls {
-                flex-direction: column;
-                align-items: center;
+                font-size: 2.6rem;
+                padding: 18px 6px;
+                min-height: 180px;
+                max-height: calc(100vh - 180px); /* Adjusted for mobile */
+                border-radius: 12px;
             }
         }
     </style>
@@ -261,18 +649,96 @@
     </div>
 
     <div class="main-content">
-        <textarea 
-            class="writing-area" 
-            id="writingArea" 
-            placeholder="Your writing will appear here once you start a session..."
-            disabled
-        ></textarea>
-        
-        <div class="word-count" id="wordCount">Words: 0</div>
-        
+        <div class="writing-container">
+            <textarea 
+                class="writing-area" 
+                id="writingArea" 
+                placeholder="Your writing will appear here once you start a session..."
+                disabled
+            ></textarea>
+        </div>
         <div class="controls">
+            <div class="word-count" id="wordCount">Words: 0</div>
             <button class="btn btn-primary" id="saveBtn" disabled>Save & Export</button>
             <button class="btn btn-secondary" id="newSessionBtn">New Session</button>
+        </div>
+
+        <!-- Cat Clock Right -->
+        <div class="cat-clock hidden" id="catClock">
+            <div class="main">
+                <div class="cat">
+                    <div class="body"></div>
+                    <div class="head">
+                        <div class="ear"></div>
+                        <div class="ear"></div>
+                    </div>
+                    <div class="face">
+                        <div class="nose"></div>
+                        <div class="whisker-container">
+                            <div class="whisker"></div>
+                            <div class="whisker"></div>
+                        </div>
+                        <div class="whisker-container">
+                            <div class="whisker"></div>
+                            <div class="whisker"></div>
+                        </div>
+                    </div>
+                    <div class="tail-container">
+                        <div class="tail">
+                            <div class="tail">
+                                <div class="tail">
+                                    <div class="tail">
+                                        <div class="tail">
+                                            <div class="tail">
+                                                <div class="tail"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cat Clock Left -->
+        <div class="cat-clock left hidden" id="catClockLeft">
+            <div class="main">
+                <div class="cat tabby">
+                    <div class="body"></div>
+                    <div class="head">
+                        <div class="ear"></div>
+                        <div class="ear"></div>
+                    </div>
+                    <div class="face">
+                        <div class="nose"></div>
+                        <div class="whisker-container">
+                            <div class="whisker"></div>
+                            <div class="whisker"></div>
+                        </div>
+                        <div class="whisker-container">
+                            <div class="whisker"></div>
+                            <div class="whisker"></div>
+                        </div>
+                    </div>
+                    <div class="tail-container">
+                        <div class="tail">
+                            <div class="tail">
+                                <div class="tail">
+                                    <div class="tail">
+                                        <div class="tail">
+                                            <div class="tail">
+                                                <div class="tail"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -284,8 +750,48 @@
                 id="sectionInput" 
                 placeholder="e.g., Chapter 3: The protagonist discovers the hidden truth about their family..."
             ></textarea>
+            
+            <div style="margin: 20px 0;">
+                <label style="display: block; margin-bottom: 10px; color: #333; font-weight: 600;">Session Duration:</label>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="radio" name="timerDuration" value="1" checked style="margin-right: 8px;">
+                        <span class="timer-option" style="padding: 8px 16px; background: #f0f0f0; border-radius: 20px; font-size: 0.9rem;">1 minute</span>
+                    </label>
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="radio" name="timerDuration" value="5" style="margin-right: 8px;">
+                        <span class="timer-option" style="padding: 8px 16px; background: #f0f0f0; border-radius: 20px; font-size: 0.9rem;">5 minutes</span>
+                    </label>
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="radio" name="timerDuration" value="10" style="margin-right: 8px;">
+                        <span class="timer-option" style="padding: 8px 16px; background: #f0f0f0; border-radius: 20px; font-size: 0.9rem;">10 minutes</span>
+                    </label>
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="radio" name="timerDuration" value="15" style="margin-right: 8px;">
+                        <span class="timer-option" style="padding: 8px 16px; background: #f0f0f0; border-radius: 20px; font-size: 0.9rem;">15 minutes</span>
+                    </label>
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="radio" name="timerDuration" value="20" style="margin-right: 8px;">
+                        <span class="timer-option" style="padding: 8px 16px; background: #667eea; color: white; border-radius: 20px; font-size: 0.9rem;">20 minutes</span>
+                    </label>
+                </div>
+            </div>
+            
             <div class="controls" style="margin-top: 20px;">
                 <button class="btn btn-primary" id="startSessionBtn">Start Writing Session</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Session Confirmation Modal -->
+    <div class="modal-overlay" id="confirmNewSessionModal" style="display:none;">
+        <div class="modal-content">
+            <h2>Start New Session?</h2>
+            <p style="margin-bottom: 18px; color: #444;" id="confirmModalText">Are you sure you want to start a new writing session?</p>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button class="btn btn-primary" id="modalSaveBtn">Save & Export</button>
+                <button class="btn btn-danger" id="modalNewSessionBtn">Start New Session</button>
+                <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
             </div>
         </div>
     </div>
@@ -293,7 +799,8 @@
     <script>
         class PomodoroWriter {
             constructor() {
-                this.timeLeft = 20 * 60; // 20 minutes in seconds
+                this.timeLeft = 1 * 60; // 1 minute in seconds (default)
+                this.sessionDuration = 1; // default duration in minutes
                 this.isActive = false;
                 this.timerInterval = null;
                 this.currentText = '';
@@ -316,13 +823,37 @@
                 this.setupModal = document.getElementById('setupModal');
                 this.sectionInput = document.getElementById('sectionInput');
                 this.startSessionBtn = document.getElementById('startSessionBtn');
+                this.catClock = document.getElementById('catClock');
+                this.catClockLeft = document.getElementById('catClockLeft');
             }
 
             setupEventListeners() {
                 this.startSessionBtn.addEventListener('click', () => this.startSession());
                 this.saveBtn.addEventListener('click', () => this.saveAndExport());
-                this.newSessionBtn.addEventListener('click', () => this.showSetupModal());
+                this.newSessionBtn.addEventListener('click', (e) => {
+                    // Only handle if not intercepted by modal logic
+                    if (this.writingArea.value.trim().length === 0 || this.writingArea.disabled) {
+                        this.handleNewSession();
+                    }
+                    // else: intercepted by modal logic
+                });
                 this.writingArea.addEventListener('input', () => this.updateWordCount());
+                
+                // Handle timer duration selection
+                const timerRadios = document.querySelectorAll('input[name="timerDuration"]');
+                timerRadios.forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        // Update styling for selected option
+                        document.querySelectorAll('.timer-option').forEach(span => {
+                            span.style.background = '#f0f0f0';
+                            span.style.color = '#333';
+                        });
+                        if (radio.checked) {
+                            radio.nextElementSibling.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
+                            radio.nextElementSibling.style.color = 'white';
+                        }
+                    });
+                });
                 
                 // Prevent closing modal accidentally
                 this.setupModal.addEventListener('click', (e) => {
@@ -348,10 +879,18 @@
                     return;
                 }
 
+                // Get selected timer duration
+                const selectedDuration = document.querySelector('input[name="timerDuration"]:checked');
+                if (selectedDuration) {
+                    this.sessionDuration = parseInt(selectedDuration.value);
+                    this.timeLeft = this.sessionDuration * 60;
+                }
+
                 // Track session start with Datadog RUM
                 if (window.DD_RUM && window.DD_RUM.addAction) {
                     window.DD_RUM.addAction('session_started', {
                         focus: sectionText,
+                        duration: this.sessionDuration,
                         timestamp: Date.now()
                     });
                 }
@@ -359,21 +898,28 @@
                 this.sectionDetails = sectionText;
                 this.sectionText.textContent = sectionText;
                 this.sectionInfo.style.display = 'block';
-                
                 this.hideSetupModal();
                 this.resetTimer();
                 this.startTimer();
                 this.enableWriting();
-                this.updateStatus('Writing session active - Focus and write!');
-                
-                // Clear previous text
+                this.updateStatus('Writing session active!');
+                this.catClock.classList.remove('hidden');
+                this.catClockLeft.classList.remove('hidden');
                 this.writingArea.value = '';
-                this.writingArea.focus();
                 this.updateWordCount();
+                
+                // Multiple focus attempts to ensure it works
+                this.writingArea.focus();
+                setTimeout(() => {
+                    this.writingArea.focus();
+                }, 10);
+                setTimeout(() => {
+                    this.writingArea.focus();
+                }, 100);
             }
 
             resetTimer() {
-                this.timeLeft = 20 * 60;
+                this.timeLeft = this.sessionDuration * 60;
                 this.isActive = false;
                 if (this.timerInterval) {
                     clearInterval(this.timerInterval);
@@ -397,20 +943,36 @@
             updateTimerDisplay() {
                 const minutes = Math.floor(this.timeLeft / 60);
                 const seconds = this.timeLeft % 60;
-                this.timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                 
-                // Update timer styling based on time left
+                this.timerEl.textContent = timeString;
+                
+                // Update timer styling based on time left (dynamic based on session duration)
                 this.timerEl.classList.remove('warning', 'critical');
-                if (this.timeLeft <= 60) {
+                const warningThreshold = Math.min(180, Math.floor(this.sessionDuration * 60 * 0.15)); // 15% of session time
+                const criticalThreshold = Math.min(60, Math.floor(this.sessionDuration * 60 * 0.05)); // 5% of session time
+                
+                if (this.timeLeft <= criticalThreshold) {
                     this.timerEl.classList.add('critical');
-                } else if (this.timeLeft <= 180) {
+                    this.catClock.style.filter = 'hue-rotate(0deg) saturate(2)';
+                    this.catClockLeft.style.filter = 'hue-rotate(0deg) saturate(2)';
+                } else if (this.timeLeft <= warningThreshold) {
                     this.timerEl.classList.add('warning');
+                    this.catClock.style.filter = 'hue-rotate(30deg) saturate(1.5)';
+                    this.catClockLeft.style.filter = 'hue-rotate(30deg) saturate(1.5)';
+                } else {
+                    this.catClock.style.filter = 'none';
+                    this.catClockLeft.style.filter = 'none';
                 }
             }
 
             checkTimeWarnings() {
-                // Flash at 3 minutes, 60 seconds, and 30 seconds
-                if (this.timeLeft === 180 || this.timeLeft === 60 || this.timeLeft === 30) {
+                // Dynamic warnings based on session duration
+                const warningThreshold = Math.min(180, Math.floor(this.sessionDuration * 60 * 0.15)); // 15% of session time
+                const criticalThreshold = Math.min(60, Math.floor(this.sessionDuration * 60 * 0.05)); // 5% of session time
+                const finalWarning = Math.min(30, Math.floor(this.sessionDuration * 60 * 0.025)); // 2.5% of session time
+                
+                if (this.timeLeft === warningThreshold || this.timeLeft === criticalThreshold || this.timeLeft === finalWarning) {
                     this.flashScreen();
                 }
             }
@@ -429,7 +991,8 @@
                     window.DD_RUM.addAction('session_ended', {
                         focus: this.sectionDetails,
                         wordCount: wordCount,
-                        duration: 20 * 60 - this.timeLeft, // actual time used
+                        duration: this.sessionDuration * 60 - this.timeLeft, // actual time used
+                        sessionDuration: this.sessionDuration,
                         timestamp: Date.now()
                     });
                 }
@@ -440,13 +1003,17 @@
                 this.updateStatus('Session complete! Save your work to continue.');
                 this.timerEl.textContent = 'TIME UP!';
                 this.timerEl.classList.add('critical');
+                this.catClock.style.filter = 'hue-rotate(0deg) saturate(3) brightness(1.2)';
+                this.catClockLeft.style.filter = 'hue-rotate(0deg) saturate(3) brightness(1.2)';
                 this.saveBtn.disabled = false;
             }
 
             enableWriting() {
                 this.writingArea.disabled = false;
                 this.writingArea.placeholder = 'Start writing your ideas here...';
-                this.saveBtn.disabled = true;
+                this.saveBtn.disabled = false;
+                // Ensure focus when enabling
+                this.writingArea.focus();
             }
 
             disableWriting() {
@@ -489,6 +1056,8 @@
                 this.writingArea.value = '';
                 this.updateWordCount();
                 this.resetTimer();
+                this.catClock.classList.add('hidden');
+                this.catClockLeft.classList.add('hidden');
                 this.showSetupModal();
             }
 
@@ -501,7 +1070,7 @@
 ## Session Details
 - **Time**: ${sessionTime}
 - **Focus**: ${this.sectionDetails}
-- **Duration**: 20 minutes (Pomodoro)
+- **Duration**: ${this.sessionDuration} minutes (Pomodoro)
 
 ## Content
 
@@ -517,10 +1086,20 @@ ${text}
                 const a = document.createElement('a');
                 
                 const timestamp = new Date().toISOString().split('T')[0];
-                const sessionNum = Math.floor(Date.now() / 1000) % 10000;
+                const timeString = new Date().toLocaleTimeString().replace(/:/g, '-').replace(/\s/g, '_');
+                
+                // Create filename from focus text, sanitized for filesystem
+                let focusText = this.sectionDetails || 'writing-session';
+                focusText = focusText
+                    .replace(/[<>:"/\\|?*]/g, '') // Remove invalid filename characters
+                    .replace(/\s+/g, '-') // Replace spaces with hyphens
+                    .replace(/[^\w\-]/g, '') // Keep only alphanumeric, hyphens, and underscores
+                    .substring(0, 50); // Limit length
+                
+                const filename = `${focusText}-${timestamp}-${timeString}.md`;
                 
                 a.href = url;
-                a.download = `writing-session-${timestamp}-${sessionNum}.md`;
+                a.download = filename;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -531,10 +1110,101 @@ ${text}
                 this.updateTimerDisplay();
                 this.updateWordCount();
             }
+
+            handleNewSession() {
+                // Clear writing area, reset state, and show setup modal
+                this.writingArea.value = '';
+                this.wordCount.textContent = 'Words: 0';
+                this.status.textContent = 'Set up your writing session to begin';
+                this.sectionInfo.style.display = 'none';
+                this.sectionText.textContent = '';
+                this.timerEl.textContent = '20:00';
+                this.writingArea.disabled = true;
+                this.saveBtn.disabled = true;
+                this.isActive = false;
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+                // Show setup modal after clearing
+                this.showSetupModal();
+            }
         }
 
         // Initialize the app
         const app = new PomodoroWriter();
+
+        // Modal logic for confirming new session
+        (function() {
+            const writingArea = document.getElementById('writingArea');
+            const newSessionBtn = document.getElementById('newSessionBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const modal = document.getElementById('confirmNewSessionModal');
+            const modalSaveBtn = document.getElementById('modalSaveBtn');
+            const modalNewSessionBtn = document.getElementById('modalNewSessionBtn');
+            const modalCancelBtn = document.getElementById('modalCancelBtn');
+            const confirmModalText = document.getElementById('confirmModalText');
+
+            // Helper to show/hide modal
+            function showModal() { modal.style.display = 'flex'; }
+            function hideModal() { modal.style.display = 'none'; }
+
+            // Intercept New Session button - always show confirmation if there's content
+            newSessionBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Always show confirmation if there's content, regardless of session state
+                if (writingArea.value.trim().length > 0) {
+                    confirmModalText.innerHTML = 'You have unsaved work! You must save your work before starting a new session.<br><br>Would you like to save your work now?';
+                    modalSaveBtn.style.display = 'inline-block';
+                    modalNewSessionBtn.style.display = 'none'; // Hide "Start New Session" until saved
+                    modalNewSessionBtn.textContent = 'Start New Session (Save First)';
+                } else {
+                    confirmModalText.innerHTML = 'Are you sure you want to start a new writing session?';
+                    modalSaveBtn.style.display = 'none';
+                    modalNewSessionBtn.style.display = 'inline-block';
+                    modalNewSessionBtn.textContent = 'Start New Session';
+                }
+                
+                showModal();
+            });
+
+            // Save & Export from modal
+            modalSaveBtn.addEventListener('click', function() {
+                hideModal();
+                // Call the save method directly
+                window.pomodoroWriter && window.pomodoroWriter.saveAndExport();
+            });
+
+            // Start New Session from modal - only allow if no content
+            modalNewSessionBtn.addEventListener('click', function() {
+                if (writingArea.value.trim().length > 0) {
+                    // Still has content, show warning
+                    alert('You still have unsaved work! Please save your work before starting a new session.');
+                    return;
+                }
+                hideModal();
+                // Only proceed if no content
+                setTimeout(() => {
+                    window.pomodoroWriter && window.pomodoroWriter.handleNewSession();
+                }, 100);
+            });
+
+            // Cancel from modal
+            modalCancelBtn.addEventListener('click', function() {
+                hideModal();
+            });
+
+            // Optional: ESC to close modal
+            window.addEventListener('keydown', function(e) {
+                if (modal.style.display !== 'none' && e.key === 'Escape') {
+                    hideModal();
+                }
+            });
+        })();
+
+        // After instantiating PomodoroWriter, add:
+        window.pomodoroWriter = app;
     </script>
 </body>
 </html>
