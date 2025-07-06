@@ -4,85 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pomodoro Writer</title>
-    <script>
-        // Datadog RUM SDK with improved error handling and debugging
-        (function(h,o,u,n,d) {
-          h=h[d]=h[d]||{q:[],onReady:function(c){h.q.push(c)}}
-          d=o.createElement(u);d.async=1;d.src=n
-          n=o.getElementsByTagName(u)[0];n.parentNode.insertBefore(d,n)
-        })(window,document,'script','https://www.datadoghq-browser-agent.com/datadog-rum-v4.js','DD_RUM')
-        
-        // Alternative CDN URL if the first one fails
-        setTimeout(function() {
-          if (!window.DD_RUM) {
-            console.log('Primary Datadog RUM script failed, trying alternative CDN...');
-            var script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/@datadog/browser-rum@4/dist/datadog-rum.js';
-            script.async = true;
-            script.onload = function() {
-              console.log('Alternative Datadog RUM script loaded successfully');
-              initializeDatadogRUM();
-            };
-            script.onerror = function() {
-              console.error('Both Datadog RUM scripts failed to load');
-            };
-            document.head.appendChild(script);
-          } else {
-            initializeDatadogRUM();
-          }
-        }, 2000);
-        
-        function initializeDatadogRUM() {
-          // Add error handling and debugging for Datadog RUM
-          window.DD_RUM.onReady(function() {
-            try {
-              console.log('Datadog RUM SDK loaded successfully');
-              window.DD_RUM.init({
-                clientToken: 'pub479347ea668846a2ba83b4a4b0a42ca0',
-                applicationId: '3bd47be0-98be-426d-96fc-63887118105d',
-                site: 'datadoghq.com',
-                service: 'pomodoro-writer',
-                env: 'prod',
-                version: '1.0.0',
-                sessionSampleRate: 100,
-                sessionReplaySampleRate: 100,
-                defaultPrivacyLevel: 'mask-user-input',
-                // Add debugging options
-                debug: true,
-                // Enable all tracking
-                trackResources: true,
-                trackLongTasks: true,
-                trackUserInteractions: true,
-                // Add custom context
-                context: {
-                  app: 'pomodoro-writer',
-                  version: '1.0.0'
-                }
-              });
-              console.log('Datadog RUM initialized successfully');
-              
-              // Test event emission
-              window.DD_RUM.addAction('app_loaded', {
-                timestamp: Date.now(),
-                message: 'Pomodoro Writer application loaded'
-              });
-              
-            } catch (error) {
-              console.error('Error initializing Datadog RUM:', error);
-            }
-          });
-        }
-        
-        // Add fallback error handling
-        window.addEventListener('error', function(e) {
-          if (window.DD_RUM && window.DD_RUM.addError) {
-            window.DD_RUM.addError(e.error || e.message, {
-              source: 'javascript',
-              stack: e.error ? e.error.stack : null
-            });
-          }
-        });
-      </script>
+    <script
+    src="https://www.datadoghq-browser-agent.com/us1/v6/datadog-rum.js"
+    type="text/javascript">
+</script>
+<script>
+    window.DD_RUM && window.DD_RUM.init({
+      clientToken: 'pub479347ea668846a2ba83b4a4b0a42ca0',
+      applicationId: '3bd47be0-98be-426d-96fc-63887118105d',
+      // `site` refers to the Datadog site parameter of your organization
+      // see https://docs.datadoghq.com/getting_started/site/
+      site: 'datadoghq.com',
+      service: 'pomodoro-writer',
+      env: '<ENV_NAME>',
+      // Specify a version number to identify the deployed version of your application in Datadog
+      // version: '1.0.0',
+      sessionSampleRate: 100,
+      sessionReplaySampleRate: 20,
+      defaultPrivacyLevel: 'mask-user-input',
+    });
+</script>
     <style>
         * {
             margin: 0;
