@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Writer</title>
+    <script>
+        (function(h,o,u,n,d) {
+          h=h[d]=h[d]||{q:[],onReady:function(c){h.q.push(c)}}
+          d=o.createElement(u);d.async=1;d.src=n
+          n=o.getElementsByTagName(u)[0];n.parentNode.insertBefore(d,n)
+        })(window,document,'script','https://www.datadoghq-browser-agent.com/us1/v6/datadog-rum.js','DD_RUM')
+        window.DD_RUM.onReady(function() {
+          window.DD_RUM.init({
+            clientToken: 'pub479347ea668846a2ba83b4a4b0a42ca0',
+            applicationId: '3bd47be0-98be-426d-96fc-63887118105d',
+            // `site` refers to the Datadog site parameter of your organization
+            // see https://docs.datadoghq.com/getting_started/site/
+            site: 'datadoghq.com',
+            service: 'pomodoro-writer',
+            env: 'prod',
+            // Specify a version number to identify the deployed version of your application in Datadog
+            // version: '1.0.0',
+            sessionSampleRate: 100,
+            sessionReplaySampleRate: 100,
+            defaultPrivacyLevel: 'mask-user-input',
+          });
+        })
+      </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .flash {
+            animation: flash 0.5s ease-in-out 3;
+        }
+
+        @keyframes flash {
+            0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+            50% { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); }
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .timer {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .timer.warning {
+            color: #ff6b6b;
+        }
+
+        .timer.critical {
+            color: #ff4757;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .section-info {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            color: #333;
+            font-size: 1.1rem;
+            line-height: 1.4;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-info h3 {
+            margin-bottom: 8px;
+            color: #764ba2;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .writing-area {
+            flex: 1;
+            width: 100%;
+            min-height: 400px;
+            padding: 25px;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            border: none;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            resize: none;
+            outline: none;
+            font-family: 'Georgia', serif;
+            color: #333;
+        }
+
+        .writing-area:disabled {
+            background: rgba(200, 200, 200, 0.5);
+            cursor: not-allowed;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #764ba2;
+            border: 2px solid #764ba2;
+        }
+
+        .btn-secondary:hover {
+            background: #764ba2;
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .setup-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h2 {
+            color: #764ba2;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-content textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            resize: vertical;
+            font-family: 'Georgia', serif;
+        }
+
+        .modal-content textarea:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .word-count {
+            text-align: right;
+            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .timer {
+                font-size: 2rem;
+            }
+            
+            .writing-area {
+                font-size: 1.1rem;
+                padding: 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="timer" id="timer">20:00</div>
+        <div class="section-info" id="sectionInfo" style="display: none;">
+            <h3>Current Focus:</h3>
+            <div id="sectionText"></div>
+        </div>
+        <div class="status" id="status">Set up your writing session to begin</div>
+    </div>
+
+    <div class="main-content">
+        <textarea 
+            class="writing-area" 
+            id="writingArea" 
+            placeholder="Your writing will appear here once you start a session..."
+            disabled
+        ></textarea>
+        
+        <div class="word-count" id="wordCount">Words: 0</div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" id="saveBtn" disabled>Save & Export</button>
+            <button class="btn btn-secondary" id="newSessionBtn">New Session</button>
+        </div>
+    </div>
+
+    <div class="setup-modal" id="setupModal">
+        <div class="modal-content">
+            <h2>Set Up Your Writing Session</h2>
+            <p style="margin-bottom: 15px; color: #666;">What are you writing about in this session?</p>
+            <textarea 
+                id="sectionInput" 
+                placeholder="e.g., Chapter 3: The protagonist discovers the hidden truth about their family..."
+            ></textarea>
+            <div class="controls" style="margin-top: 20px;">
+                <button class="btn btn-primary" id="startSessionBtn">Start Writing Session</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class PomodoroWriter {
+            constructor() {
+                this.timeLeft = 20 * 60; // 20 minutes in seconds
+                this.isActive = false;
+                this.timerInterval = null;
+                this.currentText = '';
+                this.sectionDetails = '';
+                
+                this.initializeElements();
+                this.setupEventListeners();
+                this.updateDisplay();
+            }
+
+            initializeElements() {
+                this.timerEl = document.getElementById('timer');
+                this.writingArea = document.getElementById('writingArea');
+                this.sectionInfo = document.getElementById('sectionInfo');
+                this.sectionText = document.getElementById('sectionText');
+                this.status = document.getElementById('status');
+                this.wordCount = document.getElementById('wordCount');
+                this.saveBtn = document.getElementById('saveBtn');
+                this.newSessionBtn = document.getElementById('newSessionBtn');
+                this.setupModal = document.getElementById('setupModal');
+                this.sectionInput = document.getElementById('sectionInput');
+                this.startSessionBtn = document.getElementById('startSessionBtn');
+            }
+
+            setupEventListeners() {
+                this.startSessionBtn.addEventListener('click', () => this.startSession());
+                this.saveBtn.addEventListener('click', () => this.saveAndExport());
+                this.newSessionBtn.addEventListener('click', () => this.showSetupModal());
+                this.writingArea.addEventListener('input', () => this.updateWordCount());
+                
+                // Prevent closing modal accidentally
+                this.setupModal.addEventListener('click', (e) => {
+                    if (e.target === this.setupModal) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            showSetupModal() {
+                this.setupModal.style.display = 'flex';
+                this.sectionInput.focus();
+            }
+
+            hideSetupModal() {
+                this.setupModal.style.display = 'none';
+            }
+
+            startSession() {
+                const sectionText = this.sectionInput.value.trim();
+                if (!sectionText) {
+                    alert('Please enter what you\'re writing about in this session.');
+                    return;
+                }
+
+                this.sectionDetails = sectionText;
+                this.sectionText.textContent = sectionText;
+                this.sectionInfo.style.display = 'block';
+                
+                this.hideSetupModal();
+                this.resetTimer();
+                this.startTimer();
+                this.enableWriting();
+                this.updateStatus('Writing session active - Focus and write!');
+                
+                // Clear previous text
+                this.writingArea.value = '';
+                this.writingArea.focus();
+                this.updateWordCount();
+            }
+
+            resetTimer() {
+                this.timeLeft = 20 * 60;
+                this.isActive = false;
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                }
+                this.updateTimerDisplay();
+            }
+
+            startTimer() {
+                this.isActive = true;
+                this.timerInterval = setInterval(() => {
+                    this.timeLeft--;
+                    this.updateTimerDisplay();
+                    this.checkTimeWarnings();
+                    
+                    if (this.timeLeft <= 0) {
+                        this.endSession();
+                    }
+                }, 1000);
+            }
+
+            updateTimerDisplay() {
+                const minutes = Math.floor(this.timeLeft / 60);
+                const seconds = this.timeLeft % 60;
+                this.timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Update timer styling based on time left
+                this.timerEl.classList.remove('warning', 'critical');
+                if (this.timeLeft <= 60) {
+                    this.timerEl.classList.add('critical');
+                } else if (this.timeLeft <= 180) {
+                    this.timerEl.classList.add('warning');
+                }
+            }
+
+            checkTimeWarnings() {
+                // Flash at 3 minutes, 60 seconds, and 30 seconds
+                if (this.timeLeft === 180 || this.timeLeft === 60 || this.timeLeft === 30) {
+                    this.flashScreen();
+                }
+            }
+
+            flashScreen() {
+                document.body.classList.add('flash');
+                setTimeout(() => {
+                    document.body.classList.remove('flash');
+                }, 1500);
+            }
+
+            endSession() {
+                clearInterval(this.timerInterval);
+                this.isActive = false;
+                this.disableWriting();
+                this.updateStatus('Session complete! Save your work to continue.');
+                this.timerEl.textContent = 'TIME UP!';
+                this.timerEl.classList.add('critical');
+                this.saveBtn.disabled = false;
+            }
+
+            enableWriting() {
+                this.writingArea.disabled = false;
+                this.writingArea.placeholder = 'Start writing your ideas here...';
+                this.saveBtn.disabled = true;
+            }
+
+            disableWriting() {
+                this.writingArea.disabled = true;
+            }
+
+            updateWordCount() {
+                const text = this.writingArea.value;
+                const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+                this.wordCount.textContent = `Words: ${words}`;
+            }
+
+            updateStatus(message) {
+                this.status.textContent = message;
+            }
+
+            saveAndExport() {
+                const text = this.writingArea.value;
+                if (!text.trim()) {
+                    alert('No content to save!');
+                    return;
+                }
+
+                const markdown = this.generateMarkdown(text);
+                this.downloadMarkdown(markdown);
+                
+                // Reset for next session
+                this.updateStatus('Session saved! Set up your next writing session.');
+                this.sectionInfo.style.display = 'none';
+                this.writingArea.value = '';
+                this.updateWordCount();
+                this.resetTimer();
+                this.showSetupModal();
+            }
+
+            generateMarkdown(text) {
+                const timestamp = new Date().toISOString().split('T')[0];
+                const sessionTime = new Date().toLocaleTimeString();
+                
+                return `# Writing Session - ${timestamp}
+
+## Session Details
+- **Time**: ${sessionTime}
+- **Focus**: ${this.sectionDetails}
+- **Duration**: 20 minutes (Pomodoro)
+
+## Content
+
+${text}
+
+---
+*Generated by Pomodoro Writer*`;
+            }
+
+            downloadMarkdown(content) {
+                const blob = new Blob([content], { type: 'text/markdown' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                
+                const timestamp = new Date().toISOString().split('T')[0];
+                const sessionNum = Math.floor(Date.now() / 1000) % 10000;
+                
+                a.href = url;
+                a.download = `writing-session-${timestamp}-${sessionNum}.md`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            updateDisplay() {
+                this.updateTimerDisplay();
+                this.updateWordCount();
+            }
+        }
+
+        // Initialize the app
+        const app = new PomodoroWriter();
+    </script>
+</body>
+</html>
