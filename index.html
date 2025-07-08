@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pomodoro Writer</title>
     <script>
         (function(h,o,u,n,d) {
@@ -28,6 +28,199 @@
         })
       </script>
     <style>
+        /* CSS Normalize for consistent rendering across browsers */
+        html {
+            line-height: 1.15;
+            -webkit-text-size-adjust: 100%;
+            -moz-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+        
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        }
+        
+        main {
+            display: block;
+        }
+        
+        h1 {
+            font-size: 2em;
+            margin: 0.67em 0;
+        }
+        
+        hr {
+            box-sizing: content-box;
+            height: 0;
+            overflow: visible;
+        }
+        
+        pre {
+            font-family: monospace, monospace;
+            font-size: 1em;
+        }
+        
+        a {
+            background-color: transparent;
+        }
+        
+        abbr[title] {
+            border-bottom: none;
+            text-decoration: underline;
+            text-decoration: underline dotted;
+        }
+        
+        b,
+        strong {
+            font-weight: bolder;
+        }
+        
+        code,
+        kbd,
+        samp {
+            font-family: monospace, monospace;
+            font-size: 1em;
+        }
+        
+        small {
+            font-size: 80%;
+        }
+        
+        sub,
+        sup {
+            font-size: 75%;
+            line-height: 0;
+            position: relative;
+            vertical-align: baseline;
+        }
+        
+        sub {
+            bottom: -0.25em;
+        }
+        
+        sup {
+            top: -0.5em;
+        }
+        
+        img {
+            border-style: none;
+        }
+        
+        button,
+        input,
+        optgroup,
+        select,
+        textarea {
+            font-family: inherit;
+            font-size: 100%;
+            line-height: 1.15;
+            margin: 0;
+        }
+        
+        button,
+        input {
+            overflow: visible;
+        }
+        
+        button,
+        select {
+            text-transform: none;
+        }
+        
+        button,
+        [type="button"],
+        [type="reset"],
+        [type="submit"] {
+            -webkit-appearance: button;
+            -moz-appearance: button;
+            appearance: button;
+        }
+        
+        button::-moz-focus-inner,
+        [type="button"]::-moz-focus-inner,
+        [type="reset"]::-moz-focus-inner,
+        [type="submit"]::-moz-focus-inner {
+            border-style: none;
+            padding: 0;
+        }
+        
+        button:-moz-focusring,
+        [type="button"]:-moz-focusring,
+        [type="reset"]:-moz-focusring,
+        [type="submit"]:-moz-focusring {
+            outline: 1px dotted ButtonText;
+        }
+        
+        fieldset {
+            padding: 0.35em 0.75em 0.625em;
+        }
+        
+        legend {
+            box-sizing: border-box;
+            color: inherit;
+            display: table;
+            max-width: 100%;
+            padding: 0;
+            white-space: normal;
+        }
+        
+        progress {
+            vertical-align: baseline;
+        }
+        
+        textarea {
+            overflow: auto;
+        }
+        
+        [type="checkbox"],
+        [type="radio"] {
+            box-sizing: border-box;
+            padding: 0;
+        }
+        
+        [type="number"]::-webkit-inner-spin-button,
+        [type="number"]::-webkit-outer-spin-button {
+            height: auto;
+        }
+        
+        [type="search"] {
+            -webkit-appearance: textfield;
+            -moz-appearance: textfield;
+            appearance: textfield;
+            outline-offset: -2px;
+        }
+        
+        [type="search"]::-webkit-search-decoration {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        
+        ::-webkit-file-upload-button {
+            -webkit-appearance: button;
+            -moz-appearance: button;
+            appearance: button;
+            font: inherit;
+        }
+        
+        details {
+            display: block;
+        }
+        
+        summary {
+            display: list-item;
+        }
+        
+        template {
+            display: none;
+        }
+        
+        [hidden] {
+            display: none;
+        }
+
+        /* Custom styles with improved cross-device compatibility */
         * {
             margin: 0;
             padding: 0;
@@ -35,18 +228,21 @@
         }
 
         body {
-            font-family: 'Georgia', serif;
+            font-family: 'Georgia', 'Times New Roman', 'Times', serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed; /* Prevent gradient from scrolling */
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             transition: all 0.3s ease;
-            overflow: visible; /* Ensure body doesn't clip content */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .flash {
             animation: flash 0.5s ease-in-out 3;
-            overflow: hidden; /* Prevent scrollbars during flash */
+            overflow: hidden;
         }
 
         @keyframes flash {
@@ -63,17 +259,19 @@
         .header {
             padding: 20px;
             text-align: center;
-            background: transparent; /* Completely transparent */
-            backdrop-filter: none; /* Remove backdrop filter */
+            background: transparent;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 10;
         }
 
         .timer {
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 5vw, 2.5rem); /* Responsive font size */
             font-weight: bold;
             color: white;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             margin-bottom: 10px;
+            font-family: 'Georgia', 'Times New Roman', 'Times', serif;
         }
 
         .timer.warning {
@@ -96,9 +294,9 @@
             border-radius: 2px;
             margin: 15px auto;
             color: #333;
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
             line-height: 1.5;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif;
             position: relative;
             transform: rotate(-1deg);
             box-shadow: 
@@ -106,7 +304,7 @@
                 0 8px 16px rgba(0, 0, 0, 0.1),
                 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
             border: 1px solid #f0e68c;
-            width: 300px;
+            width: min(300px, 90%);
             max-width: 90%;
             text-align: center;
         }
@@ -140,7 +338,7 @@
         .section-info h3 {
             margin-bottom: 12px;
             color: #d4af37;
-            font-size: 1.2rem;
+            font-size: clamp(1.1rem, 2.5vw, 1.2rem);
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -157,7 +355,7 @@
             position: relative;
             height: 100vh;
             box-sizing: border-box;
-            overflow: visible; /* Changed from hidden to visible to allow cats to show */
+            overflow: visible;
         }
 
         .writing-container {
@@ -166,7 +364,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            max-width: 900px;
+            max-width: min(900px, 95vw);
             margin: 40px auto 100px auto;
             padding: 0 24px;
             background: rgba(255,255,255,0.97);
@@ -182,9 +380,9 @@
             flex: 1;
             width: 100%;
             min-height: 300px;
-            max-height: calc(100vh - 200px); /* Account for header and controls */
+            max-height: calc(100vh - 200px);
             padding: 32px 24px;
-            font-size: 4.4rem;
+            font-size: clamp(2rem, 4vw, 4.4rem);
             line-height: 1.6;
             border: none;
             border-radius: 18px;
@@ -192,10 +390,11 @@
             box-shadow: none;
             resize: none;
             outline: none;
-            font-family: 'Georgia', serif;
+            font-family: 'Georgia', 'Times New Roman', 'Times', serif;
             color: #333;
-            overflow-y: auto; /* Enable vertical scrolling */
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
         }
 
         .writing-area:disabled {
@@ -215,6 +414,7 @@
             padding: 18px 10px 18px 10px;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); /* Safari support */
             border-top: 1px solid rgba(200, 200, 200, 0.2);
             z-index: 200;
             box-sizing: border-box;
@@ -222,7 +422,7 @@
 
         .btn {
             padding: 12px 24px;
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
             border: none;
             border-radius: 25px;
             cursor: pointer;
@@ -230,6 +430,10 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
+            font-family: inherit;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
 
         .btn-primary {
@@ -290,15 +494,17 @@
             background: white;
             padding: 30px;
             border-radius: 20px;
-            max-width: 500px;
+            max-width: min(500px, 90vw);
             width: 90%;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            margin: 20px;
         }
 
         .modal-content h2 {
             color: #764ba2;
             margin-bottom: 20px;
             text-align: center;
+            font-size: clamp(1.5rem, 4vw, 2rem);
         }
 
         .modal-content textarea {
@@ -309,7 +515,8 @@
             border-radius: 10px;
             font-size: 1rem;
             resize: vertical;
-            font-family: 'Georgia', serif;
+            font-family: 'Georgia', 'Times New Roman', 'Times', serif;
+            box-sizing: border-box;
         }
 
         .modal-content textarea:focus {
@@ -334,21 +541,21 @@
         .status {
             text-align: center;
             margin-top: 15px;
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
             color: white;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .word-count {
             margin-right: auto;
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
             color: #666;
             padding-left: 10px;
         }
 
         .cat-clock {
-            position: absolute;
-            top: -100px;
+            position: fixed;
+            top: 15px;
             right: 20px;
             width: 240px;
             height: 240px;
@@ -358,6 +565,7 @@
         .cat-clock.left {
             right: auto;
             left: 20px;
+            top: 15px;
         }
 
         .cat-clock.left .cat {
@@ -374,7 +582,7 @@
             width: 88px;
             height: 40px;
             position: absolute;
-            top: calc(50% - 40px);
+            bottom: 0;
             right: 104px;
             border-top-left-radius: 80px;
             border-top-right-radius: 80px;
@@ -622,18 +830,105 @@
             display: none;
         }
 
+        /* Improved responsive design */
         @media (max-width: 900px) {
             .writing-container {
                 max-width: 98vw;
-                margin: 24px 1vw 100px 1vw; /* Increased bottom margin for controls */
+                margin: 24px 1vw 100px 1vw;
                 padding: 0 4vw;
             }
             .writing-area {
-                font-size: 2.6rem;
+                font-size: clamp(1.8rem, 4vw, 2.6rem);
                 padding: 18px 6px;
                 min-height: 180px;
-                max-height: calc(100vh - 180px); /* Adjusted for mobile */
+                max-height: calc(100vh - 180px);
                 border-radius: 12px;
+            }
+            .controls {
+                padding: 15px 10px;
+                gap: 10px;
+            }
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            .cat-clock {
+                width: 180px;
+                height: 180px;
+                top: 15px;
+            }
+            .cat-clock .main {
+                height: 180px;
+                width: 180px;
+            }
+            .cat-clock .cat {
+                bottom: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 15px;
+            }
+            .timer {
+                font-size: 2rem;
+            }
+            .section-info {
+                width: 95%;
+                padding: 15px;
+                font-size: 1rem;
+            }
+            .writing-container {
+                margin: 15px 2vw 100px 2vw;
+                padding: 0 2vw;
+                border-radius: 15px;
+            }
+            .writing-area {
+                padding: 15px 10px;
+                font-size: 1.6rem;
+                min-height: 150px;
+            }
+            .controls {
+                padding: 12px 8px;
+                gap: 8px;
+            }
+            .btn {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+            .word-count {
+                font-size: 0.9rem;
+                padding-left: 5px;
+            }
+            .modal-content {
+                padding: 20px;
+                margin: 10px;
+            }
+            .cat-clock {
+                display: none; /* Hide cats on very small screens */
+            }
+        }
+
+        /* High DPI display support */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .writing-area {
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .controls, .setup-modal, .modal-overlay, .cat-clock {
+                display: none !important;
+            }
+            .writing-container {
+                box-shadow: none !important;
+                border: 1px solid #ccc !important;
             }
         }
     </style>
@@ -662,36 +957,36 @@
             <button class="btn btn-primary" id="saveBtn" disabled>Save & Export</button>
             <button class="btn btn-secondary" id="newSessionBtn">New Session</button>
         </div>
+    </div>
 
-        <!-- Cat Clock Right -->
-        <div class="cat-clock hidden" id="catClock">
-            <div class="main">
-                <div class="cat">
-                    <div class="body"></div>
-                    <div class="head">
-                        <div class="ear"></div>
-                        <div class="ear"></div>
+    <!-- Cat Clock Right -->
+    <div class="cat-clock hidden" id="catClock">
+        <div class="main">
+            <div class="cat">
+                <div class="body"></div>
+                <div class="head">
+                    <div class="ear"></div>
+                    <div class="ear"></div>
+                </div>
+                <div class="face">
+                    <div class="nose"></div>
+                    <div class="whisker-container">
+                        <div class="whisker"></div>
+                        <div class="whisker"></div>
                     </div>
-                    <div class="face">
-                        <div class="nose"></div>
-                        <div class="whisker-container">
-                            <div class="whisker"></div>
-                            <div class="whisker"></div>
-                        </div>
-                        <div class="whisker-container">
-                            <div class="whisker"></div>
-                            <div class="whisker"></div>
-                        </div>
+                    <div class="whisker-container">
+                        <div class="whisker"></div>
+                        <div class="whisker"></div>
                     </div>
-                    <div class="tail-container">
+                </div>
+                <div class="tail-container">
+                    <div class="tail">
                         <div class="tail">
                             <div class="tail">
                                 <div class="tail">
                                     <div class="tail">
                                         <div class="tail">
-                                            <div class="tail">
-                                                <div class="tail"></div>
-                                            </div>
+                                            <div class="tail"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -701,36 +996,36 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Cat Clock Left -->
-        <div class="cat-clock left hidden" id="catClockLeft">
-            <div class="main">
-                <div class="cat tabby">
-                    <div class="body"></div>
-                    <div class="head">
-                        <div class="ear"></div>
-                        <div class="ear"></div>
+    <!-- Cat Clock Left -->
+    <div class="cat-clock left hidden" id="catClockLeft">
+        <div class="main">
+            <div class="cat tabby">
+                <div class="body"></div>
+                <div class="head">
+                    <div class="ear"></div>
+                    <div class="ear"></div>
+                </div>
+                <div class="face">
+                    <div class="nose"></div>
+                    <div class="whisker-container">
+                        <div class="whisker"></div>
+                        <div class="whisker"></div>
                     </div>
-                    <div class="face">
-                        <div class="nose"></div>
-                        <div class="whisker-container">
-                            <div class="whisker"></div>
-                            <div class="whisker"></div>
-                        </div>
-                        <div class="whisker-container">
-                            <div class="whisker"></div>
-                            <div class="whisker"></div>
-                        </div>
+                    <div class="whisker-container">
+                        <div class="whisker"></div>
+                        <div class="whisker"></div>
                     </div>
-                    <div class="tail-container">
+                </div>
+                <div class="tail-container">
+                    <div class="tail">
                         <div class="tail">
                             <div class="tail">
                                 <div class="tail">
                                     <div class="tail">
                                         <div class="tail">
-                                            <div class="tail">
-                                                <div class="tail"></div>
-                                            </div>
+                                            <div class="tail"></div>
                                         </div>
                                     </div>
                                 </div>
